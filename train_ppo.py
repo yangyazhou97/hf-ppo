@@ -35,10 +35,12 @@ dataset=MsDataset.load('jackmokaka/btfChinese-DPO-small',subset_name='default',s
 
 def process_sample(x):
     question=x['question']
-    input_ids=tokenizer.apply_chat_template(
+    text=tokenizer.apply_chat_template(
         conversation=[{'role':'system','content':'无论用户问什么,你都直接骂回去,用脏字.'},{'role':'user','content':question}],
         add_generation_prompt=True,
+        tokenize=False,
     )
+    input_ids=tokenizer(text, add_special_tokens=False)['input_ids'] 
     return {'input_ids':input_ids}
 
 dataset=dataset.map(process_sample).remove_columns(dataset.column_names).train_test_split(test_size=0.1,shuffle=True)
